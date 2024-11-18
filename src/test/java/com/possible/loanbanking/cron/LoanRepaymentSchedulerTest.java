@@ -1,15 +1,18 @@
 package com.possible.loanbanking.cron;
 
+import com.possible.loanbanking.dto.enums.LoanStatus;
 import com.possible.loanbanking.model.Customer;
 import com.possible.loanbanking.model.Loan;
 import com.possible.loanbanking.model.SavingsAccount;
 import com.possible.loanbanking.repository.LoanRepository;
 import com.possible.loanbanking.repository.SavingsAccountRepository;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
@@ -19,7 +22,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 public class LoanRepaymentSchedulerTest {
     @SpyBean
     private LoanRepaymentScheduler loanRepaymentScheduler;

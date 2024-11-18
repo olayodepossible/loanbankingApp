@@ -1,6 +1,5 @@
 package com.possible.loanbanking.dto.req;
 
-import com.johnbosco.enums.TransactionType;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -15,6 +14,6 @@ public class TransactionReq {
     private BigDecimal amount;
 
     @NotNull(message = "Transaction type is required")
-    private TransactionType transactionType;
+    private TransactionReq transactionType;
 }
 
