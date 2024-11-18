@@ -1,5 +1,6 @@
 package com.possible.loanbanking.model;
 
+import com.possible.loanbanking.dto.enums.TransactionType;
 import jakarta.persistence.*;
 import lombok.Data;
 

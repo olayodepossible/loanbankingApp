@@ -1,7 +1,10 @@
 package com.possible.loanbanking.service;
 
+
+import com.possible.loanbanking.dto.enums.LoanStatus;
 import com.possible.loanbanking.model.Customer;
 import com.possible.loanbanking.model.Loan;
+import com.possible.loanbanking.repository.CustomerRepository;
 import com.possible.loanbanking.repository.LoanRepository;
 import com.possible.loanbanking.repository.SavingsAccountRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +18,7 @@ import java.util.List;
 public class LoanService {
     private final LoanRepository loanRepository;
     private final SavingsAccountRepository savingsAccountRepository;
+    private final CustomerRepository customerRepository;
 
     public Loan requestLoan(Long customerId, BigDecimal loanAmount) {
         List<Loan> existingLoans = loanRepository.findByCustomerIdAndStatus(customerId, LoanStatus.APPROVED);
@@ -26,7 +30,7 @@ public class LoanService {
         }
 
         Loan loan = new Loan();
-        loan.setCustomer(new Customer(customerId)); // Set only the ID for simplicity
+        loan.setCustomer(customerRepository.getReferenceById(customerId)); // Set only the ID for simplicity
         loan.setLoanAmount(loanAmount);
         loan.setRemainingBalance(loanAmount);
         return loanRepository.save(loan);

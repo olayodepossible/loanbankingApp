@@ -1,5 +1,6 @@
 package com.possible.loanbanking.cron;
 
+import com.possible.loanbanking.dto.enums.LoanStatus;
 import com.possible.loanbanking.model.Loan;
 import com.possible.loanbanking.model.SavingsAccount;
 import com.possible.loanbanking.repository.LoanRepository;
@@ -21,7 +22,7 @@ public class LoanRepaymentScheduler {
     @Scheduled(cron = "0 0 0 3 * ?") // Runs at midnight on the 3rd day of every month
     public void processLoanRepayments() {
         List<Loan> loans = loanRepository.findAll().stream()
-                .filter(loan -> loan.getStatus() == LoanStatus.APPROVED &&
+                .filter(loan -> loan.getStatus().name().equalsIgnoreCase(LoanStatus.APPROVED.name()) &&
                         loan.getRemainingBalance().compareTo(BigDecimal.ZERO) > 0)
                 .collect(Collectors.toList());
 

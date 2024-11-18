@@ -1,5 +1,6 @@
 package com.possible.loanbanking.repository;
 
+import com.possible.loanbanking.dto.enums.LoanStatus;
 import com.possible.loanbanking.model.Loan;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

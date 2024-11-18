@@ -1,6 +1,5 @@
 package com.possible.loanbanking.cron;
 
-import com.possible.loanbanking.dto.LoanStatus;
 import com.possible.loanbanking.model.Customer;
 import com.possible.loanbanking.model.Loan;
 import com.possible.loanbanking.model.SavingsAccount;
