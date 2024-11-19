@@ -1,12 +1,14 @@
 package com.possible.loanbanking.dto.req;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
+
 import lombok.Data;
-public class CustomerReq {
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
+@Data
+public class UserReq {
 
         @NotBlank(message = "First name is required")
         private String firstName;
@@ -19,5 +21,5 @@ public class CustomerReq {
 
         @Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be 10 digits")
         private String phoneNumber;
-    }
+}
 

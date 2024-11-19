@@ -1,10 +1,10 @@
 package com.possible.loanbanking.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.possible.loanbanking.dto.enums.TransactionType;
+import com.possible.loanbanking.dto.req.AccountType;
+import com.possible.loanbanking.dto.req.AppUser;
 
 import javax.persistence.*;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,39 +12,39 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Entity
 @Data
-@Table(name = "transactions")
+@Entity
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class Transaction {
+public class Account implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Enumerated(EnumType.STRING)
+    private AccountType accountType;
+
     private String status;
-    private String narration;
-    private String senderAcct;
-    private String beneficiaryAcct;
 
-
-    private BigDecimal debit;
-    private BigDecimal amount;
-    private BigDecimal credit;
     private BigDecimal balance;
 
-    @CreationTimestamp
-    private LocalDateTime postedDate;
-    @UpdateTimestamp
-    private LocalDateTime valueDate;
+    private float interestRate;
 
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+
+    private String accountNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id")
+    @JoinColumn(name = "user_id")
     @JsonIgnore
-    private Account account;
+    private AppUser user;
 }
-

@@ -1,6 +1,7 @@
 package com.possible.loanbanking.model;
 
-import jakarta.persistence.*;
+
+import javax.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;

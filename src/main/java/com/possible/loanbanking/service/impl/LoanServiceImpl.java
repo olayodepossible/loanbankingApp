@@ -1,11 +1,12 @@
-package com.possible.loanbanking.service;
-
+package com.possible.loanbanking.service.impl;
 
 import com.possible.loanbanking.dto.enums.LoanStatus;
+import com.possible.loanbanking.dto.req.AppUser;
+import com.possible.loanbanking.exceptiion.ResourceNotFoundException;
 import com.possible.loanbanking.model.Loan;
-import com.possible.loanbanking.repository.UserRepository;
 import com.possible.loanbanking.repository.LoanRepository;
 import com.possible.loanbanking.repository.AccountRepository;
+import com.possible.loanbanking.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,8 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class LoanService {
+public class LoanServiceImpl {
+
     private final LoanRepository loanRepository;
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
@@ -29,7 +31,8 @@ public class LoanService {
         }
 
         Loan loan = new Loan();
-        loan.setCustomer(userRepository.getById(customerId)); // Set only the ID for simplicity
+        AppUser user = userRepository.findById(customerId).orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
+        loan.setCustomer(user); // Set only the ID for simplicity
         loan.setLoanAmount(loanAmount);
         loan.setRemainingBalance(loanAmount);
         return loanRepository.save(loan);
@@ -51,4 +54,3 @@ public class LoanService {
         loanRepository.save(loan);
     }
 }
-

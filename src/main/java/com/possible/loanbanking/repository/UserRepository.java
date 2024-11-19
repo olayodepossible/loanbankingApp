@@ -1,12 +1,19 @@
 package com.possible.loanbanking.repository;
 
+import com.possible.loanbanking.dto.req.AppUser;
 import com.possible.loanbanking.model.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
-public interface CustomerRepository extends JpaRepository<Customer, Long> {
+public interface UserRepository extends JpaRepository<AppUser, Long> {
     boolean existsByEmail(String email);
     boolean existsByPhoneNumber(String phoneNumber);
+
+    Optional<AppUser> findByEmail(String email);
+    Optional<AppUser> findByUsername(String email);
+    Optional<AppUser> findByAccountNumber(String accountNumber);
 }
 

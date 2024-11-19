@@ -1,9 +1,11 @@
 package com.possible.loanbanking.service;
 
+import com.possible.loanbanking.dto.req.AppUser;
+import com.possible.loanbanking.model.Account;
 import com.possible.loanbanking.model.Customer;
 import com.possible.loanbanking.model.SavingsAccount;
-import com.possible.loanbanking.repository.CustomerRepository;
-import com.possible.loanbanking.repository.SavingsAccountRepository;
+import com.possible.loanbanking.repository.UserRepository;
+import com.possible.loanbanking.repository.AccountRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -11,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.Optional;
@@ -21,30 +22,30 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
-public class SavingsAccountServiceTest {
+public class AccountServiceTest {
     @Autowired
-    private SavingsAccountService savingsAccountService;
+    private AccountService accountService;
 
     @MockBean
-    private SavingsAccountRepository savingsAccountRepository;
+    private AccountRepository accountRepository;
 
     @MockBean
-    private CustomerRepository customerRepository;
+    private UserRepository userRepository;
 
     @Test
     void testCreateSavingsAccount_Success() {
         Long customerId = 1L;
 
-        Customer customer = new Customer();
+        AppUser customer = new AppUser();
         customer.setId(customerId);
 
-        Mockito.when(customerRepository.existsById(customerId)).thenReturn(true);
-        Mockito.when(savingsAccountRepository.findByCustomerId(customerId)).thenReturn(Optional.empty());
-        Mockito.when(customerRepository.findById(customerId)).thenReturn(Optional.of(customer));
-        Mockito.when(savingsAccountRepository.save(Mockito.any(SavingsAccount.class)))
+        Mockito.when(userRepository.existsById(customerId)).thenReturn(true);
+        Mockito.when(accountRepository.findByCustomerId(customerId)).thenReturn(Optional.empty());
+        Mockito.when(userRepository.findById(customerId)).thenReturn(Optional.of(customer));
+        Mockito.when(accountRepository.save(Mockito.any(Account.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        SavingsAccount account = savingsAccountService.createSavingsAccount(customerId);
+        SavingsAccount account = accountService.createSavingsAccount(customerId);
 
         assertNotNull(account);
         assertEquals(customerId, account.getCustomer().getId());
@@ -55,9 +56,9 @@ public class SavingsAccountServiceTest {
     @ExceptionHandler(value = IllegalArgumentException.class)
     void testCreateSavingsAccount_CustomerNotFound() {
         Long customerId = 1L;
-        Mockito.when(customerRepository.existsById(customerId)).thenReturn(false);
+        Mockito.when(userRepository.existsById(customerId)).thenReturn(false);
 
-        savingsAccountService.createSavingsAccount(customerId);
+        accountService.createSavingsAccount(customerId);
     }
 
     @Test
@@ -65,9 +66,9 @@ public class SavingsAccountServiceTest {
     void testCreateSavingsAccount_AlreadyExists() {
         Long customerId = 1L;
 
-        Mockito.when(customerRepository.existsById(customerId)).thenReturn(true);
-        Mockito.when(savingsAccountRepository.findByCustomerId(customerId)).thenReturn(Optional.of(new SavingsAccount()));
+        Mockito.when(userRepository.existsById(customerId)).thenReturn(true);
+        Mockito.when(accountRepository.findByCustomerId(customerId)).thenReturn(Optional.of(new Account()));
 
-        savingsAccountService.createSavingsAccount(customerId);
+        accountService.createSavingsAccount(customerId);
     }
 }

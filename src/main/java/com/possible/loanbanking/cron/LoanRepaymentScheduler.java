@@ -1,10 +1,11 @@
 package com.possible.loanbanking.cron;
 
 import com.possible.loanbanking.dto.enums.LoanStatus;
+import com.possible.loanbanking.model.Account;
 import com.possible.loanbanking.model.Loan;
 import com.possible.loanbanking.model.SavingsAccount;
 import com.possible.loanbanking.repository.LoanRepository;
-import com.possible.loanbanking.repository.SavingsAccountRepository;
+import com.possible.loanbanking.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class LoanRepaymentScheduler {
     private final LoanRepository loanRepository;
-    private final SavingsAccountRepository savingsAccountRepository;
+    private final AccountRepository accountRepository;
 
     @Scheduled(cron = "0 0 0 3 * ?") // Runs at midnight on the 3rd day of every month
     public void processLoanRepayments() {
@@ -27,7 +28,7 @@ public class LoanRepaymentScheduler {
                 .collect(Collectors.toList());
 
         for (Loan loan : loans) {
-            SavingsAccount account = savingsAccountRepository.findByCustomerId(loan.getCustomer().getId())
+           Account account = accountRepository.findByUser(loan.getCustomer().getId())
                     .orElseThrow(() -> new IllegalStateException("Savings account not found for customer"));
 
             BigDecimal repaymentAmount = loan.getLoanAmount().multiply(BigDecimal.valueOf(0.10));
@@ -36,7 +37,7 @@ public class LoanRepaymentScheduler {
                 loan.setRemainingBalance(loan.getRemainingBalance().subtract(repaymentAmount));
 
                 // Save updated account and loan
-                savingsAccountRepository.save(account);
+                accountRepository.save(account);
                 loanRepository.save(loan);
             }
         }

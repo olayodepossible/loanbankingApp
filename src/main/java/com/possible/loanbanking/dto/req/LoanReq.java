@@ -1,10 +1,11 @@
 package com.possible.loanbanking.dto.req;
 
 
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotNull;
+
 import lombok.Data;
 
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 public class LoanReq {
 

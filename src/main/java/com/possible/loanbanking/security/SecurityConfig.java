@@ -1,9 +1,10 @@
-package com.possible.loanbanking.config;
+package com.possible.loanbanking.security;
 
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -22,22 +23,25 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     private final JwtAuthenticationFilter filter;
 
-    private static final String[] AUTH_WHITELIST = { "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/api/v1/admin/register", "/api/v1/customer/register","/api/v1/login", "/api/v1/logout"};
+    private static final String[] AUTH_WHITELIST = { "/swagger-ui/**", "/swagger-ui.html",
+            "/api-docs/**", "/users", "/auth", "/h2-console/**"};
+    private static  final  String[] ADMIN_AUTH_LIST = {"/events"};
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception
     {
-
         http
                 .csrf().disable()
+                .cors().disable()
                 .authorizeHttpRequests()
                 .antMatchers(AUTH_WHITELIST).permitAll()
-                .anyRequest()
-                .authenticated()
+                .mvcMatchers(HttpMethod.POST, "/events").hasAuthority("ADMIN")
+                .anyRequest().authenticated()
                 .and()
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
+        http.headers().frameOptions().disable();
         return http.build();
     }
 

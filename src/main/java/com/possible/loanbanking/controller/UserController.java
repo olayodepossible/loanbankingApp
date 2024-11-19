@@ -1,9 +1,13 @@
 package com.possible.loanbanking.controller;
 
-import com.possible.loanbanking.model.Customer;
-import com.possible.loanbanking.service.CustomerService;
-import lombok.RequiredArgsConstructor;
-import jakarta.validation.Valid;
+import com.possible.loanbanking.dto.req.LoginDto;
+import com.possible.loanbanking.model.Role;
+import com.possible.loanbanking.dto.req.UserDto;
+import com.possible.loanbanking.dto.req.UserInfo;
+import com.possible.loanbanking.dto.response.ResponseDto;
+import com.possible.loanbanking.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,17 +16,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+
 @RestController
 @Tag(name = "User Services")
 @RequestMapping("api/v1")
 @RequiredArgsConstructor
 public class UserController {
-    private final CustomerService customerService;
-
-    @PostMapping
-    public ResponseEntity<Customer> createCustomer(@Valid @RequestBody Customer customer) {
-        return new ResponseEntity<>(customerService.createCustomer(customer), HttpStatus.CREATED);
-    }
+    private final UserService userService;
 
 
     @Operation(summary = "This method is used to create Admin User.")

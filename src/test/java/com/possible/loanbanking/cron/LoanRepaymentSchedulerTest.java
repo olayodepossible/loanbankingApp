@@ -1,11 +1,13 @@
 package com.possible.loanbanking.cron;
 
 import com.possible.loanbanking.dto.enums.LoanStatus;
+import com.possible.loanbanking.dto.req.AppUser;
+import com.possible.loanbanking.model.Account;
 import com.possible.loanbanking.model.Customer;
 import com.possible.loanbanking.model.Loan;
 import com.possible.loanbanking.model.SavingsAccount;
 import com.possible.loanbanking.repository.LoanRepository;
-import com.possible.loanbanking.repository.SavingsAccountRepository;
+import com.possible.loanbanking.repository.AccountRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -13,7 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -31,15 +32,15 @@ public class LoanRepaymentSchedulerTest {
     private LoanRepository loanRepository;
 
     @MockBean
-    private SavingsAccountRepository savingsAccountRepository;
+    private AccountRepository accountRepository;
 
     @Test
     public void testProcessLoanRepayments() {
-        Customer customer = new Customer();
+        AppUser customer = new AppUser();
         customer.setId(1L);
 
-        SavingsAccount account = new SavingsAccount();
-        account.setCustomer(customer);
+       Account account = new Account();
+        account.setUser(customer);
         account.setBalance(BigDecimal.valueOf(1000));
 
         Loan loan = new Loan();
@@ -49,7 +50,7 @@ public class LoanRepaymentSchedulerTest {
         loan.setStatus(LoanStatus.APPROVED);
 
         Mockito.when(loanRepository.findAll()).thenReturn(List.of(loan));
-        Mockito.when(savingsAccountRepository.findByCustomerId(1L)).thenReturn(Optional.of(account));
+        Mockito.when(accountRepository.findByCustomerId(1L)).thenReturn(Optional.of(account));
 
         loanRepaymentScheduler.processLoanRepayments();
 

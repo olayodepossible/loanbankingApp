@@ -25,8 +25,8 @@ public class SwaggerConfig {
                 .addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
                 .components(new Components().addSecuritySchemes("Bearer Authentication", createAPIKeyScheme()))
                 .info(new Info()
-                        .title("Bank App API")
-                        .description("Bank App API description")
+                        .title("Bank Service API")
+                        .description("Bank-Loan App API description")
                         .version("1.0")
                         .contact(new Contact().name("Tester QA").email( "www.test-qa.com").url("test-qa@gmail.com"))
                         .license(new License().name("License of API").url("API license URL")));
