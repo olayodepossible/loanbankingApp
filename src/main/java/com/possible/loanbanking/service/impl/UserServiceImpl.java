@@ -12,6 +12,8 @@ import com.possible.loanbanking.service.UserService;
 import com.possible.loanbanking.utils.AccountUtil;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.possible.loanbanking.utils.EmailServiceUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -35,6 +37,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final PasswordEncoder passwordEncoder;
 
     private final JwtAuthenticationHelper jwtHelper;
+    private final EmailServiceUtil emailService;
     private static final String SUCCESSFUL_LOGIN = "User login successfully";
 
 
@@ -96,6 +99,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .username(savedAppUser.getUsername())
                 .token(jwtHelper.generateToken(saveAppUser.getUsername()))
                 .build();
+
+        EmailDto mailDto = EmailDto.builder()
+                .toAddress(List.of(savedAppUser.getEmail()))
+                .content("Dear " + savedAppUser.getFirstName() + ",\n\n Congratulations, you have been successfully registered and your account number is :" + savedAcct.getAccountNumber())
+                .subject("Reminder: Upcoming Event")
+                .build();
+        emailService.sendEmail(mailDto);
 
         return ResponseDto.builder()
                 .statusCode(200)

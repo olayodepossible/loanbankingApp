@@ -35,10 +35,12 @@ public class LoanRepaymentScheduler {
             if (account.getBalance().compareTo(repaymentAmount) >= 0) {
                 account.setBalance(account.getBalance().subtract(repaymentAmount));
                 loan.setRemainingBalance(loan.getRemainingBalance().subtract(repaymentAmount));
-
-                // Save updated account and loan
+                // TODO: send email notification
                 accountRepository.save(account);
                 loanRepository.save(loan);
+            }
+            else {
+                // TODO: send email notification
             }
         }
     }

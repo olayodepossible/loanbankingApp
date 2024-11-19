@@ -17,6 +17,24 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+  sql:
+    init:
+      mode: always
+
+
+  mail:
+    host: smtp.gmail.com
+    port: 465
+    username: abyolayode5344@gmail.com
+    password: ${mail_password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            enable: true
 
 # Scheduler Configuration
   task:
