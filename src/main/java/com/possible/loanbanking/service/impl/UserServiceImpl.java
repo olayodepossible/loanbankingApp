@@ -56,8 +56,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         }
 
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        String encodedPassword = encoder.encode(userDto.getPassword());
+        String encodedPassword = passwordEncoder.encode(userDto.getPassword());
 
         AppUser saveAppUser = AppUser.builder()
                 .firstName(userDto.getFirstName())
@@ -113,8 +112,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .data(userInfo)
                 .build();
     }
-
-
 
     @Override
     public ResponseDto userLogin(LoginDto loginDto) {

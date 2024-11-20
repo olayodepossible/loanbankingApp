@@ -18,68 +18,52 @@ import org.springframework.web.bind.annotation.*;
 public class AccountController {
 
     private final AccountService accountService;
-    private final UserService userService;
 
     @GetMapping("/balance")
-    public ResponseEntity<ResponseDto> getBalance(@RequestParam String accountNumber){
+    public ResponseEntity<ResponseDto<Object>> getBalance(@RequestParam String accountNumber){
         return new ResponseEntity<>(accountService.balanceEnquiry(accountNumber), HttpStatus.OK);
     }
 
     @GetMapping("/save")
-    public ResponseEntity<ResponseDto> saveMoney(@RequestParam String accountNumber, @RequestParam Long amount){
+    public ResponseEntity<ResponseDto<Object>> saveMoney(@RequestParam String accountNumber, @RequestParam Long amount){
         return new ResponseEntity<>(accountService.saveToAccount(accountNumber, amount), HttpStatus.OK);
     }
 
     @GetMapping("/withdraw")
-    public ResponseEntity<ResponseDto> withdrawMoney(@RequestParam String accountNumber, @RequestParam Long amount){
+    public ResponseEntity<ResponseDto<Object>> withdrawMoney(@RequestParam String accountNumber, @RequestParam Long amount){
         return new ResponseEntity<>(accountService.withdrawFromAccount(accountNumber, amount), HttpStatus.OK);
     }
 
     @GetMapping("/transactions")
-    public ResponseEntity<ResponseDto> getTransactions(@RequestParam String accountNumber){
+    public ResponseEntity<ResponseDto<Object>> getTransactions(@RequestParam String accountNumber){
         return new ResponseEntity<>(accountService.getUserTransactions(accountNumber), HttpStatus.OK);
-    }
-
-    @GetMapping("/getAllUser")
-    @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ResponseDto<AppUser>> getAllUser(){
-        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
-    }
-
-    @DeleteMapping("/deleteUser/{userId}")
-    @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ResponseDto<String>> deleteUserById(@PathVariable Long userId){
-        return new ResponseEntity<>(userService.deleteUserById(userId), HttpStatus.OK);
-
     }
 
     @PutMapping("/account/deactivate")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ResponseDto> deactivateAccount(@RequestParam Long userId, @RequestParam Long accountId){
+    public ResponseEntity<ResponseDto<Object>> deactivateAccount(@RequestParam Long userId, @RequestParam Long accountId){
         return new ResponseEntity<>(accountService.deactivateUserAccount(userId,accountId), HttpStatus.OK);
     }
 
     @PutMapping("/account/activate")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ResponseDto> activateAccount(@RequestParam Long userId, @RequestParam Long accountId){
+    public ResponseEntity<ResponseDto<Object>> activateAccount(@RequestParam Long userId, @RequestParam Long accountId){
         return new ResponseEntity<>(accountService.activateAccount(userId, accountId), HttpStatus.OK);
     }
 
     @GetMapping("/account/getActiveAccountsList")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ResponseDto> activeAccountList(){
+    public ResponseEntity<ResponseDto<Object>> activeAccountList(){
         return new ResponseEntity<>(accountService.getAllActiveAccountList(), HttpStatus.OK);
     }
 
     @GetMapping("/account/getInActiveAccountsList")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ResponseDto>inActiveAccountList(){
+    public ResponseEntity<ResponseDto<Object>>inActiveAccountList(){
         return new ResponseEntity<>(accountService.getAllInActiveAccountList(), HttpStatus.OK);
 
     }
@@ -87,13 +71,8 @@ public class AccountController {
     @GetMapping("/accountList/ByAccountType/{accType}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ResponseDto> getAccountListByAccType(@PathVariable AccountType accType){
+    public ResponseEntity<ResponseDto<Object>> getAccountListByAccType(@PathVariable AccountType accType){
         return new ResponseEntity<>(accountService.byAccType(accType), HttpStatus.OK);
     }
 
-
-    /*
-    Users should be able to view their account balances and transaction history.
-            • Implement functionalities for transferring funds between accounts.
-            • Ensure that transactions are processed securely and accurately.*/
 }

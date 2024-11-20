@@ -1,5 +1,6 @@
 package com.possible.loanbanking.controller;
 
+import com.possible.loanbanking.dto.req.AppUser;
 import com.possible.loanbanking.dto.req.LoginDto;
 import com.possible.loanbanking.model.Role;
 import com.possible.loanbanking.dto.req.UserDto;
@@ -10,10 +11,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.servlet.http.HttpServletRequest;
@@ -66,6 +65,21 @@ public class UserController {
             return  ResponseEntity.badRequest().body(responseDto);
         }
         return  new ResponseEntity<>(responseDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/getAllUser")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ResponseDto<AppUser>> getAllUser(){
+        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/deleteUser/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ResponseDto<String>> deleteUserById(@PathVariable Long userId){
+        return new ResponseEntity<>(userService.deleteUserById(userId), HttpStatus.OK);
+
     }
 
 
