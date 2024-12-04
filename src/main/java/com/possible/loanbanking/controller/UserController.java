@@ -1,6 +1,6 @@
 package com.possible.loanbanking.controller;
 
-import com.possible.loanbanking.dto.req.AppUser;
+import com.possible.loanbanking.model.AppUser;
 import com.possible.loanbanking.dto.req.LoginDto;
 import com.possible.loanbanking.model.Role;
 import com.possible.loanbanking.dto.req.UserDto;
@@ -18,10 +18,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @RestController
 @Tag(name = "User Services")
-@RequestMapping("api/v1")
+@RequestMapping("api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
@@ -33,7 +36,9 @@ public class UserController {
     {
         Role role = new Role();
         role.setRoleName("ROLE_ADMIN");
-        ResponseDto<UserInfo> responseDto = userService.registerUser(admin, role);
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
+        ResponseDto<UserInfo> responseDto = userService.registerUser(admin, roles);
 
         if (responseDto.getStatusCode() != 200) {
             return  ResponseEntity.badRequest().body(responseDto);
@@ -41,13 +46,15 @@ public class UserController {
         return  new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
-    @Operation(summary = "This method is used to create Admin User.")
-    @PostMapping("/customer/register")
+    @Operation(summary = "This method is used to create Users.")
+    @PostMapping("/register")
     public ResponseEntity<ResponseDto<UserInfo>> registerCustomer(@RequestBody @Valid UserDto user)
     {
         Role role = new Role();
-        role.setRoleName("ROLE_CUSTOMER");
-        ResponseDto<UserInfo> responseDto = userService.registerUser(user, role);
+        role.setRoleName("ROLE_USER");
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
+        ResponseDto<UserInfo> responseDto = userService.registerUser(user, roles);
 
         if (responseDto.getStatusCode() != 200) {
             return  ResponseEntity.badRequest().body(responseDto);

@@ -1,6 +1,6 @@
 package com.possible.loanbanking.controller;
 
-import com.possible.loanbanking.model.Loan;
+import com.possible.loanbanking.dto.response.ResponseDto;
 import com.possible.loanbanking.service.LoanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,20 +16,21 @@ public class LoanController {
     private final LoanService loanService;
 
     @PostMapping("/request")
-    public ResponseEntity<Loan> requestLoan(@RequestParam Long customerId, @RequestParam BigDecimal loanAmount) {
-        return new ResponseEntity<>(loanService.requestLoan(customerId, loanAmount), HttpStatus.CREATED);
+    public ResponseEntity<ResponseDto<Object>> requestLoan(@RequestParam Long customerId, @RequestParam BigDecimal loanAmount) {
+        ResponseDto<Object> loanResp = loanService.requestLoan(customerId, loanAmount);
+        return new ResponseEntity<>(loanResp, HttpStatus.CREATED);
     }
 
     @PatchMapping("/{loanId}/approve")
-    public ResponseEntity<Void> approveLoan(@PathVariable Long loanId) {
+    public ResponseEntity<String> approveLoan(@PathVariable Long loanId) {
         loanService.approveLoan(loanId);
-        return ResponseEntity.ok().build();
+        return new ResponseEntity<>("Loan request approved", HttpStatus.OK);
     }
 
     @PatchMapping("/{loanId}/reject")
-    public ResponseEntity<Void> rejectLoan(@PathVariable Long loanId) {
+    public ResponseEntity<String> rejectLoan(@PathVariable Long loanId) {
         loanService.rejectLoan(loanId);
-        return ResponseEntity.ok().build();
+        return new ResponseEntity<>("Loan request rejected", HttpStatus.OK);
     }
 }
 

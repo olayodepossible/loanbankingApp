@@ -1,15 +1,20 @@
 package com.possible.loanbanking.controller;
 
 import com.possible.loanbanking.dto.req.AccountType;
-import com.possible.loanbanking.dto.req.AppUser;
 import com.possible.loanbanking.dto.response.ResponseDto;
+import com.possible.loanbanking.model.Transaction;
 import com.possible.loanbanking.service.AccountService;
-import com.possible.loanbanking.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 
 @RestController
@@ -73,6 +78,17 @@ public class AccountController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ResponseDto<Object>> getAccountListByAccType(@PathVariable AccountType accType){
         return new ResponseEntity<>(accountService.byAccType(accType), HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<Transaction>> getAccountTransactions(
+            @RequestParam String accountNumber,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end,
+            @RequestParam int page,
+            @RequestParam int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return new ResponseEntity<>( accountService.getAccountStatement(accountNumber, start, end, pageable), HttpStatus.OK);
     }
 
 }

@@ -1,7 +1,6 @@
 package com.possible.loanbanking.repository;
 
-import com.possible.loanbanking.dto.req.AppUser;
-import com.possible.loanbanking.model.Customer;
+import com.possible.loanbanking.model.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

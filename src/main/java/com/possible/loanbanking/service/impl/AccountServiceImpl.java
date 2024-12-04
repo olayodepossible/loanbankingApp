@@ -1,7 +1,7 @@
 package com.possible.loanbanking.service.impl;
 
 import com.possible.loanbanking.dto.req.AccountType;
-import com.possible.loanbanking.dto.req.AppUser;
+import com.possible.loanbanking.model.AppUser;
 import com.possible.loanbanking.dto.req.TransactionDto;
 import com.possible.loanbanking.dto.response.ResponseDto;
 import com.possible.loanbanking.exceptiion.AccountNotFoundException;
@@ -12,13 +12,15 @@ import com.possible.loanbanking.repository.TransactionRepository;
 import com.possible.loanbanking.repository.UserRepository;
 import com.possible.loanbanking.service.AccountService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -39,10 +41,6 @@ public class AccountServiceImpl implements AccountService {
                 .build();
     }
 
-    @Override
-    public Account createSavingsAccount(Long customerId) {
-        return null;
-    }
 
     @Override
     public ResponseDto getUserTransactions(String accountNumber) {
@@ -60,6 +58,13 @@ public class AccountServiceImpl implements AccountService {
                 .responseMessage("User Transactions retrieved successfully")
                 .data(transactions)
                 .build();
+    }
+
+    public Page<Transaction> getAccountStatement(String accountNumber, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
+        Account account = accountRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+
+        return transactionRepository.findByAccount_AccountNumberAndPostedDateBetween(account.getAccountNumber(), startDate, endDate, pageable);
     }
 
     @Transactional
@@ -175,6 +180,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Transactional
     public ResponseDto saveToAccount(String accountNumber, Long amount) {
         Account initiator = accountRepository.findByAccountNumber(accountNumber)
                 .orElseThrow(() -> new AccountNotFoundException(String.format(ACCT_NOT_FOUND, accountNumber)));
@@ -279,7 +285,7 @@ public class AccountServiceImpl implements AccountService {
 
 
 
-    public Account createSavingsAccount2(Long customerId) {
+    /*public Account createSavingsAccount2(Long customerId) {
         if (!userRepository.existsById(customerId)) {
             throw new IllegalArgumentException("Customer does not exist.");
         }
@@ -291,5 +297,5 @@ public class AccountServiceImpl implements AccountService {
         account.setUser(userRepository.findById(customerId).orElseThrow());
         account.setAccountNumber(accountNumber);
         return accountRepository.save(account);
-    }
+    }*/
 }

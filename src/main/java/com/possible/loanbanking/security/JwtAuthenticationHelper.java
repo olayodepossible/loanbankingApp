@@ -5,18 +5,19 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
 @Component
+@Slf4j
 public class JwtAuthenticationHelper {
 
     @Value("${jwt.secret}")
@@ -33,8 +34,9 @@ public class JwtAuthenticationHelper {
 
         return Jwts.builder()
                 .setClaims(claims)
+                .setSubject(username) // Set the subject to the username
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis()+expiration))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
@@ -49,8 +51,11 @@ public class JwtAuthenticationHelper {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder().setSigningKey(secret.getBytes())
-                .build().parseClaimsJws(token).getBody();
+        return Jwts.parserBuilder()
+                .setSigningKey(getSignInKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     private SecretKey getSignInKey() {
@@ -72,18 +77,12 @@ public class JwtAuthenticationHelper {
     }
 
     public String setTokenExpirationToPast(String token) {
-        // Parse the token to get claims
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(secret.getBytes())
-                .build()
-                .parseClaimsJws(token).getBody();
-
-        // Set token expiration to a past date (e.g., 1 minute ago)
+        Claims claims = extractAllClaims(token);
         claims.setExpiration(new Date(System.currentTimeMillis() - 3600000)); // 1 hour ago
 
         return Jwts.builder()
                 .setClaims(claims)
-                .signWith(new SecretKeySpec(secret.getBytes(),SignatureAlgorithm.HS512.getJcaName()),SignatureAlgorithm.HS512)
+                .signWith(getSignInKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
 }

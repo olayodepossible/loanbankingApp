@@ -2,6 +2,7 @@ package com.possible.loanbanking.service;
 
 
 import com.possible.loanbanking.dto.enums.LoanStatus;
+import com.possible.loanbanking.dto.response.ResponseDto;
 import com.possible.loanbanking.model.Loan;
 import com.possible.loanbanking.repository.UserRepository;
 import com.possible.loanbanking.repository.LoanRepository;
@@ -19,7 +20,7 @@ public class LoanService {
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
 
-    public Loan requestLoan(Long customerId, BigDecimal loanAmount) {
+    public ResponseDto<Object> requestLoan(Long customerId, BigDecimal loanAmount) {
         List<Loan> existingLoans = loanRepository.findByCustomerIdAndStatus(customerId, LoanStatus.APPROVED);
         boolean hasOutstandingLoan = existingLoans.stream()
                 .anyMatch(loan -> loan.getRemainingBalance().compareTo(BigDecimal.ZERO) > 0);
@@ -29,18 +30,25 @@ public class LoanService {
         }
 
         Loan loan = new Loan();
-        loan.setCustomer(userRepository.getById(customerId)); // Set only the ID for simplicity
+        loan.setCustomer(userRepository.getById(customerId));
         loan.setLoanAmount(loanAmount);
         loan.setRemainingBalance(loanAmount);
-        return loanRepository.save(loan);
+        loan = loanRepository.save(loan);
+
+        return ResponseDto.builder()
+                .statusCode(200)
+                .responseMessage("Loan request created successfully")
+                .data(loan)
+                .build();
     }
 
     public void approveLoan(Long loanId) {
         Loan loan = loanRepository.findById(loanId).orElseThrow(() ->
-                new IllegalArgumentException("Loan not found.")
-        );
+                new IllegalArgumentException("Loan not found."));
         loan.setStatus(LoanStatus.APPROVED);
         loanRepository.save(loan);
+
+        // TODO: drop the money in beneficiary account
     }
 
     public void rejectLoan(Long loanId) {

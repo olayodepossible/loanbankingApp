@@ -36,11 +36,13 @@ public class Transaction {
     private BigDecimal credit;
     private BigDecimal balance;
 
+    @Enumerated(EnumType.STRING)
+    private TransactionType transactionType;
+
     @CreationTimestamp
     private LocalDateTime postedDate;
     @UpdateTimestamp
     private LocalDateTime valueDate;
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")

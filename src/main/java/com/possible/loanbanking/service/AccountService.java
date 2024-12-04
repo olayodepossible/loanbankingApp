@@ -3,19 +3,16 @@ package com.possible.loanbanking.service;
 import com.possible.loanbanking.dto.req.AccountType;
 import com.possible.loanbanking.dto.req.TransactionDto;
 import com.possible.loanbanking.dto.response.ResponseDto;
-import com.possible.loanbanking.model.Account;
-import com.possible.loanbanking.model.SavingsAccount;
-import com.possible.loanbanking.repository.UserRepository;
-import com.possible.loanbanking.repository.AccountRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import com.possible.loanbanking.model.Transaction;;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.util.UUID;
+import java.time.LocalDateTime;
 
 
 public interface AccountService {
 
-  Account createSavingsAccount(Long customerId);
+
 
     ResponseDto getUserTransactions(String accountNumber);
 
@@ -38,5 +35,6 @@ public interface AccountService {
     ResponseDto withdrawFromAccount(String accountNumber, Long amount);
 
 
+    Page<Transaction> getAccountStatement(String accountNumber, LocalDateTime start, LocalDateTime end, Pageable pageable);
 }
 

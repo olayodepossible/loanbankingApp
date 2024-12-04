@@ -14,12 +14,7 @@ public class AccountUtil {
         int max = 999999;
 
         //generate a random number between min and max
-        int randNumber = (int) Math.floor(random.nextInt() * (max - min + 1) + min);
-        //convert the current and randomNumber to strings, then concatenate them
-
-        String year = String.valueOf(currentYear);
-        String randomNumber = String.valueOf(randNumber);
-
-        return year + randomNumber;
+        int randNumber = (int) Math.floor(random.nextInt() * ((currentYear.getValue()+max) - min + 1) + min);
+        return String.valueOf(randNumber);
     }
 }

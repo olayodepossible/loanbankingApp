@@ -1,0 +1,18 @@
+
+----Dummy Data
+--
+
+--INSERT INTO User (firstName, lastName, email, password) VALUES
+--('User1', 'Test1', 'user1@example.com', '$2a$10$p2FCpeOsBo.6YcmKsuzxJuU3prDH08XslHZMNyVzsGKAEUPuHMDt2'),
+--('User2', 'Test2', 'user2@example.com', '$2a$10$p2FCpeOsBo.6YcmKsuzxJuU3prDH08XslHZMNyVzsGKAEUPuHMDt2'),
+--('User3', 'Test3', 'user3@example.com', '$2a$10$p2FCpeOsBo.6YcmKsuzxJuU3prDH08XslHZMNyVzsGKAEUPuHMDt2'),
+--('User4', 'Test4', 'user4@example.com', '$2a$10$p2FCpeOsBo.6YcmKsuzxJuU3prDH08XslHZMNyVzsGKAEUPuHMDt2'),
+--COMMIT;
+--
+--INSERT INTO roles (roleName, user_id)
+--VALUES ('ADMIN', 1);
+--VALUES ('USER', 2);
+--VALUES ('USER', 3);
+--VALUES ('USER', 4);
+--COMMIT;
+--

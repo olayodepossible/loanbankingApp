@@ -1,6 +1,7 @@
 package com.possible.loanbanking.model;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -11,39 +12,19 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "role")
+@Table(name = "roles")
 public class Role implements Serializable {
     private static final long serialVersionUID = 2405172041950251807L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String roleName;
 
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Builder
-    public static class LoginDto {
+    @ManyToOne()
+    @JsonBackReference
+    @JoinColumn(name = "user_id")
+    private AppUser user;
 
-        private String username;
-        private String password;
 
-    }
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class UserDto {
-       private String firstName;
-       private String lastName;
-       private String email;
-       private String username;
-       private Integer age;
-       private String password;
-       private String address;
-       private String phoneNumber;
-       private String identityProof;
-    }
 }

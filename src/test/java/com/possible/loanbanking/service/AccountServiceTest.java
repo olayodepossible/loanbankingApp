@@ -1,6 +1,6 @@
 package com.possible.loanbanking.service;
 
-import com.possible.loanbanking.dto.req.AppUser;
+import com.possible.loanbanking.model.AppUser;
 import com.possible.loanbanking.model.Account;
 import com.possible.loanbanking.model.Customer;
 import com.possible.loanbanking.model.SavingsAccount;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
-public class AccountServiceTest {
+class AccountServiceTest {
     @Autowired
     private AccountService accountService;
 

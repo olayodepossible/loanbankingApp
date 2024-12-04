@@ -1,7 +1,6 @@
 package com.possible.loanbanking.model;
 
 import com.possible.loanbanking.dto.enums.LoanStatus;
-import com.possible.loanbanking.dto.req.AppUser;
 
 import javax.persistence.*;
 import lombok.Data;

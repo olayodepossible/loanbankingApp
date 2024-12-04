@@ -1,7 +1,7 @@
 package com.possible.loanbanking.service.impl;
 
 import com.possible.loanbanking.dto.enums.LoanStatus;
-import com.possible.loanbanking.dto.req.AppUser;
+import com.possible.loanbanking.model.AppUser;
 import com.possible.loanbanking.exceptiion.ResourceNotFoundException;
 import com.possible.loanbanking.model.Loan;
 import com.possible.loanbanking.repository.LoanRepository;

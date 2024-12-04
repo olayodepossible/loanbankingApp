@@ -1,6 +1,10 @@
 package com.possible.loanbanking.service;
 
+import com.possible.loanbanking.dto.req.UserDto;
+import com.possible.loanbanking.dto.response.ResponseDto;
+import com.possible.loanbanking.model.AppUser;
 import com.possible.loanbanking.model.Customer;
+import com.possible.loanbanking.model.Role;
 import com.possible.loanbanking.repository.UserRepository;
 import com.possible.loanbanking.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -12,12 +16,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.util.Collections;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
-public class UserServiceImplTest {
+class UserServiceImplTest {
     @Autowired
     private UserServiceImpl userServiceImpl;
 
@@ -26,7 +32,7 @@ public class UserServiceImplTest {
 
     @Test
     void testCreateCustomer_Success() {
-        Customer customer = new Customer();
+        UserDto customer = new UserDto();
         customer.setFirstName("John");
         customer.setLastName("Doe");
         customer.setEmail("john.doe@example.com");
@@ -34,13 +40,13 @@ public class UserServiceImplTest {
 
         Mockito.when(userRepository.existsByEmail("john.doe@example.com")).thenReturn(false);
         Mockito.when(userRepository.existsByPhoneNumber("1234567890")).thenReturn(false);
-        Mockito.when(userRepository.save(Mockito.any(Customer.class))).thenReturn(customer);
+        Mockito.when(userRepository.save(Mockito.any(AppUser.class))).thenReturn(AppUser.builder().build());
 
-        Customer savedCustomer = userServiceImpl.createCustomer(customer);
+        ResponseDto<AppUser> savedCustomer = userServiceImpl.registerUser(customer, Collections.EMPTY_SET);
 
         assertNotNull(savedCustomer);
-        assertEquals("John", savedCustomer.getFirstName());
-        assertEquals("Doe", savedCustomer.getLastName());
+        assertEquals("John", savedCustomer.getData().getFirstName());
+        assertEquals("Doe", savedCustomer.getData().getLastName());
     }
 
     @Test
@@ -48,9 +54,9 @@ public class UserServiceImplTest {
     void testCreateCustomer_EmailAlreadyExists() {
         Mockito.when(userRepository.existsByEmail("existing.email@example.com")).thenReturn(true);
 
-        Customer customer = new Customer();
+        UserDto customer = new UserDto();
         customer.setEmail("existing.email@example.com");
-        userServiceImpl.createCustomer(customer);
+        userServiceImpl.registerUser(customer, Collections.EMPTY_SET);
     }
 }
 

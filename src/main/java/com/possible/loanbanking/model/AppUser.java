@@ -1,5 +1,6 @@
-package com.possible.loanbanking.dto.req;
+package com.possible.loanbanking.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.possible.loanbanking.model.Account;
 
 import com.possible.loanbanking.model.Role;
@@ -19,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -68,15 +70,14 @@ public class AppUser implements UserDetails {
     @Pattern(regexp = "^\\d{11}$", message = "Invalid phone number")
     private String phoneNumber;
 
-    @NotBlank(message = "Invalid Proof of Identity: must not be empty")
-    @NotNull(message = "Invalid Proof of Identity:  must not be NULL")
-    private String identityProof;
+    private boolean isIdentityProof;
 
     private String accountNumber;
-    private Boolean isEnable;
+    private boolean isEnable;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    private Role roles;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private Set<Role> roles;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -89,7 +90,11 @@ public class AppUser implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(this.roles.getRoleName()));
+        if (roles != null) {
+            for (Role role: roles) {
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + role.toString()));
+            }
+        }
         return authorities;
     }
 
@@ -99,7 +104,7 @@ public class AppUser implements UserDetails {
 
     @Override
     public String getUsername() {
-        return username;
+        return email;
     }
 
     @Override

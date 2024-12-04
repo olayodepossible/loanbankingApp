@@ -4,7 +4,6 @@ package com.possible.loanbanking.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -22,10 +21,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtAuthenticationFilter filter;
-
     private static final String[] AUTH_WHITELIST = { "/swagger-ui/**", "/swagger-ui.html",
-            "/api-docs/**", "/users", "/auth", "/h2-console/**"};
-    private static  final  String[] ADMIN_AUTH_LIST = {"/events"};
+            "/api-docs/**",  "/api/v1/users/register", "/api/v1/users/login",
+            "/api/v1/users/admin/register", "/auth", "/h2-console/**"
+    };
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception
@@ -35,7 +34,6 @@ public class SecurityConfig {
                 .cors().disable()
                 .authorizeHttpRequests()
                 .antMatchers(AUTH_WHITELIST).permitAll()
-                .mvcMatchers(HttpMethod.POST, "/events").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

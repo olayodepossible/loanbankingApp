@@ -17,7 +17,7 @@ public class SavingsAccount {
 
     @OneToOne
     @JoinColumn(name = "customer_id", nullable = false, unique = true)
-    private Customer customer;
+    private AppUser customer;
 
     @Column(nullable = false, unique = true)
     private String accountNumber;

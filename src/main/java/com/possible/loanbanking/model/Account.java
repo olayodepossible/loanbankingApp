@@ -2,7 +2,6 @@ package com.possible.loanbanking.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.possible.loanbanking.dto.req.AccountType;
-import com.possible.loanbanking.dto.req.AppUser;
 
 import javax.persistence.*;
 import lombok.AllArgsConstructor;

@@ -1,7 +1,7 @@
 package com.possible.loanbanking.security;
 
 
-import com.possible.loanbanking.dto.req.AppUser;
+import com.possible.loanbanking.model.AppUser;
 import com.possible.loanbanking.repository.UserRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.AllArgsConstructor;

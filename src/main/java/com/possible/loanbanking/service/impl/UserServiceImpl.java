@@ -4,8 +4,10 @@ import com.possible.loanbanking.dto.enums.AccountStatus;
 import com.possible.loanbanking.dto.req.*;
 import com.possible.loanbanking.dto.response.ResponseDto;
 import com.possible.loanbanking.model.Account;
+import com.possible.loanbanking.model.AppUser;
 import com.possible.loanbanking.model.Role;
 import com.possible.loanbanking.repository.AccountRepository;
+import com.possible.loanbanking.repository.RoleRepository;
 import com.possible.loanbanking.repository.UserRepository;
 import com.possible.loanbanking.security.JwtAuthenticationHelper;
 import com.possible.loanbanking.service.UserService;
@@ -17,7 +19,6 @@ import com.possible.loanbanking.utils.EmailServiceUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +35,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
     private final AccountRepository accountRepository;
+    private final RoleRepository roleRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -42,12 +45,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 
     @Override
-    public ResponseDto registerUser(UserDto userDto, Role role) {
+    public ResponseDto registerUser(UserDto userDto, Set<Role> roles) {
         Optional<AppUser> optionalUser = userRepository.findByEmail(userDto.getEmail());
 
         if (optionalUser.isPresent()){
             AppUser appUserEntity = optionalUser.get();
-            if (!appUserEntity.getAccountList().isEmpty() || role.getRoleName().equalsIgnoreCase("ROLE_ADMIN")) {
+            if (!appUserEntity.getAccountList().isEmpty()) {
                 return ResponseDto.builder()
                         .statusCode(400)
                         .responseMessage("Attempt to create duplicate user record")
@@ -62,13 +65,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .firstName(userDto.getFirstName())
                 .lastName(userDto.getLastName())
                 .password(encodedPassword)
-                .phoneNumber(userDto.getPhoneNumber())
-                .identityProof(userDto.getIdentityProof())
                 .username(userDto.getUsername())
+                .phoneNumber(userDto.getPhoneNumber())
+                .isIdentityProof(userDto.isIdentityProof())
                 .age(userDto.getAge())
                 .address(userDto.getAddress())
-                .email(userDto.getEmail() != null ? userDto.getEmail() : "dummy@email.comit ")
-                .roles(role)
+                .email(userDto.getEmail())
+                .roles(roles)
                 .isEnable(true)
                 .build();
 
@@ -96,15 +99,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .address(saveAppUser.getAddress())
                 .phoneNumber(savedAppUser.getPhoneNumber())
                 .username(savedAppUser.getUsername())
-                .token(jwtHelper.generateToken(saveAppUser.getUsername()))
+                .token(jwtHelper.generateToken(saveAppUser.getEmail()))
                 .build();
+
 
         EmailDto mailDto = EmailDto.builder()
                 .toAddress(List.of(savedAppUser.getEmail()))
                 .content("Dear " + savedAppUser.getFirstName() + ",\n\n Congratulations, you have been successfully registered and your account number is :" + savedAcct.getAccountNumber())
-                .subject("Reminder: Upcoming Event")
+                .subject("Registration Successful")
                 .build();
         emailService.sendEmail(mailDto);
+
 
         return ResponseDto.builder()
                 .statusCode(200)
@@ -129,7 +134,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                     .responseMessage("Invalid user credential")
                     .build();
         }
-        String token = jwtHelper.generateToken(appUser.getUsername());
+        String token = jwtHelper.generateToken(appUser.getEmail());
 
         UserInfo userInfo = UserInfo.builder()
                 .email(appUser.getEmail())
@@ -236,7 +241,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
         return null;
     }
-
 
 }
 

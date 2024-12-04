@@ -3,7 +3,6 @@ package com.possible.loanbanking.cron;
 import com.possible.loanbanking.dto.enums.LoanStatus;
 import com.possible.loanbanking.model.Account;
 import com.possible.loanbanking.model.Loan;
-import com.possible.loanbanking.model.SavingsAccount;
 import com.possible.loanbanking.repository.LoanRepository;
 import com.possible.loanbanking.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,18 +27,18 @@ public class LoanRepaymentScheduler {
                 .collect(Collectors.toList());
 
         for (Loan loan : loans) {
-           Account account = accountRepository.findByUser(loan.getCustomer().getId())
+            Account account = accountRepository.findByUser(loan.getCustomer().getId())
                     .orElseThrow(() -> new IllegalStateException("Savings account not found for customer"));
 
             BigDecimal repaymentAmount = loan.getLoanAmount().multiply(BigDecimal.valueOf(0.10));
-            if (account.getBalance().compareTo(repaymentAmount) >= 0) {
+            BigDecimal customerBal = account.getBalance();
+            if (customerBal.compareTo(repaymentAmount) > 0) {
                 account.setBalance(account.getBalance().subtract(repaymentAmount));
                 loan.setRemainingBalance(loan.getRemainingBalance().subtract(repaymentAmount));
                 // TODO: send email notification
                 accountRepository.save(account);
                 loanRepository.save(loan);
-            }
-            else {
+            } else {
                 // TODO: send email notification
             }
         }

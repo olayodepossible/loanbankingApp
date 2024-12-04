@@ -1,11 +1,9 @@
 package com.possible.loanbanking.cron;
 
 import com.possible.loanbanking.dto.enums.LoanStatus;
-import com.possible.loanbanking.dto.req.AppUser;
+import com.possible.loanbanking.model.AppUser;
 import com.possible.loanbanking.model.Account;
-import com.possible.loanbanking.model.Customer;
 import com.possible.loanbanking.model.Loan;
-import com.possible.loanbanking.model.SavingsAccount;
 import com.possible.loanbanking.repository.LoanRepository;
 import com.possible.loanbanking.repository.AccountRepository;
 import org.junit.jupiter.api.Test;
@@ -24,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
-public class LoanRepaymentSchedulerTest {
+class LoanRepaymentSchedulerTest {
     @SpyBean
     private LoanRepaymentScheduler loanRepaymentScheduler;
 
@@ -35,7 +33,7 @@ public class LoanRepaymentSchedulerTest {
     private AccountRepository accountRepository;
 
     @Test
-    public void testProcessLoanRepayments() {
+    void testProcessLoanRepayments() {
         AppUser customer = new AppUser();
         customer.setId(1L);
 
@@ -50,7 +48,7 @@ public class LoanRepaymentSchedulerTest {
         loan.setStatus(LoanStatus.APPROVED);
 
         Mockito.when(loanRepository.findAll()).thenReturn(List.of(loan));
-        Mockito.when(accountRepository.findByCustomerId(1L)).thenReturn(Optional.of(account));
+        Mockito.when(accountRepository.getById(1L)).thenReturn(account);
 
         loanRepaymentScheduler.processLoanRepayments();
 
